@@ -1,6 +1,6 @@
 # ⚡ MailLayer Embedded
 
-MailLayer Embedded is a lightweight, drop-in JavaScript library that upgrades standard `mailto:` links on your website. Instead of opening a desktop client, it injects a premium iframe modal that lets visitors send emails directly via Gmail or Outlook.
+MailLayer Embedded is a lightweight, drop-in JavaScript library that upgrades standard `mailto:` links on your website. Instead of opening a desktop client, it injects a native iframe modal that lets visitors send emails directly via Gmail or Outlook.
 
 ## 🚀 Quick Start
 
