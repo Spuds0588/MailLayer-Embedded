@@ -256,16 +256,25 @@
         const style = document.createElement('style');
         style.id = 'maillayer-magic-styles';
         style.textContent = `
+            @keyframes maillayerFadeIn {
+                from { opacity: 0; filter: blur(2px); }
+                to { opacity: 1; filter: blur(0); }
+            }
             .maillayer-magic-link {
-                border-bottom: 1px dashed ${config.autoLinkColor};
-                color: inherit;
+                color: ${config.autoLinkColor};
+                border-bottom: 1px solid ${config.autoLinkColor}44;
                 cursor: pointer;
                 display: inline-flex;
                 align-items: center;
-                transition: opacity 0.2s;
+                transition: all 0.2s ease;
+                animation: maillayerFadeIn 0.5s ease-out forwards;
+                text-decoration: none;
+                font-weight: 500;
             }
             .maillayer-magic-link:hover {
-                opacity: 0.8;
+                border-bottom-color: ${config.autoLinkColor};
+                background: ${config.autoLinkColor}11;
+                border-radius: 4px;
             }
         `;
         document.head.appendChild(style);
