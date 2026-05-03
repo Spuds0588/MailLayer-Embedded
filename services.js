@@ -3,7 +3,7 @@
  * Adapted for Web environment with Popup OAuth.
  */
 
-const GOOGLE_CLIENT_ID = '1034329801184-789oagdjuvqc43hars9993n7jleo75ke.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = '1034329801184-nu1h1128ec36fuejkgn6v6q9rcn0ud75.apps.googleusercontent.com';
 const OUTLOOK_CLIENT_ID = 'ce78b45b-572b-4eb7-80f8-41547567ec34';
 
 class AuthService {
