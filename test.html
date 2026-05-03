@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MailLayer Embedded Test Page</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 1rem; }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            background: #e03616;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(224, 54, 22, 0.4);
+        }
+        code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>MailLayer Embedded Test</h1>
+    <p>This page demonstrates the <code>mailto:</code> interception and modal injection.</p>
+
+    <div class="card">
+        <h3>Standard Mailto Link</h3>
+        <p>This link should be intercepted by MailLayer.</p>
+        <a href="mailto:support@maillayer.io?subject=Help%20Requested&body=Hello%20Team," class="btn">Contact Support</a>
+    </div>
+
+    <div class="card">
+        <h3>Custom Styled Link</h3>
+        <p>This link uses data attributes to customize the MailLayer modal.</p>
+        <a href="mailto:sales@maillayer.io" 
+           class="btn" 
+           style="background: #2563eb;"
+           data-maillayer-theme="light"
+           data-maillayer-color="2563eb">Contact Sales</a>
+    </div>
+
+    <div class="card">
+        <h3>Multiple Recipients</h3>
+        <a href="mailto:dev@example.com?cc=manager@example.com&bcc=archive@example.com&subject=Project%20Update">Send Update</a>
+    </div>
+
+    <div class="card">
+        <h3>Button Trigger (.maillayer-trigger)</h3>
+        <p>This button uses a custom class and data attributes to trigger the modal.</p>
+        <button class="maillayer-trigger btn" 
+                data-maillayer-to="hiring@startup.io"
+                data-maillayer-subject="Application for Senior Engineer"
+                data-maillayer-body="Hello, I am interested in the position.">Apply Now</button>
+    </div>
+
+    <div class="card">
+        <h3>Auto-Detect (Magic UX)</h3>
+        <p>These plain-text email addresses should be automatically converted into triggers:</p>
+        <ul>
+            <li>Primary contact: info@maillayer.io</li>
+            <li>Support: help.desk@maillayer.io</li>
+            <li>Direct: corey@example.com (with custom link styling)</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>Locked Fields & No Attachments</h3>
+        <p>This link locks the 'To' and 'Subject' fields and disables attachments.</p>
+        <a href="mailto:ceo@example.com?subject=Confidential%20Report" 
+           class="btn"
+           style="background: #0f172a;"
+           data-maillayer-lock-to="true"
+           data-maillayer-lock-subject="true"
+           data-maillayer-disable-attachments="true">Send Secure Report</a>
+    </div>
+
+    <!-- Include the MailLayer library with Auto-Detect ENABLED -->
+    <script src="maillayer.js" 
+            data-maillayer-auto-detect="true"
+            data-maillayer-auto-link-color="#e03616"></script>
+</body>
+</html>
