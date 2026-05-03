@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MailLayer Embedded - Native Email Sending in 1 Line of Code</title>
+    <meta name="description" content="Upgrade your website's email experience. Intercept mailto links and provide a premium, integrated email composition modal with just one line of code.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"></script>
+    <style>
+        :root {
+            --blackberry: #58355e;
+            --burnt-tangerine: #e03616;
+            --banana-cream: #fff689;
+            --tea-green: #cfffb0;
+            --blue-bell: #5998c5;
+            --black: #0a0a0a;
+            --pure-black: #000000;
+            --white: #ffffff;
+            --text-main: #f3f4f6;
+            --text-dim: #9ca3af;
+        }
+
+        html { scroll-behavior: smooth; background-color: var(--pure-black); }
+        body { 
+            background-color: transparent; 
+            color: var(--text-main); 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            margin: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- Background Animation: Meteor Envelopes --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 0%, transparent 50%, rgba(10,10,15,0.8) 100%);
+        }
+
+        .bg-gradient-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(89, 152, 197, 0.1) 0%, transparent 50%),
+                        radial-gradient(ellipse at 100% 100%, rgba(224, 54, 22, 0.1) 0%, transparent 50%);
+        }
+
+        .bg-wrap {
+            perspective: 1000px;
+            perspective-origin: 50% 50%;
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+
+        .floating-svg {
+            position: absolute;
+            bottom: -200px;
+            transform-style: preserve-3d;
+            transition: opacity 1s;
+            stroke: var(--blue-bell);
+            fill: none;
+            stroke-width: 5;
+            opacity: 0.3;
+        }
+
+        @keyframes float-up {
+            from {
+                bottom: -200px;
+                transform: translateX(0) rotate(0deg);
+            }
+            to {
+                bottom: 120vh;
+                transform: translateX(var(--drift)) rotate(var(--rotation));
+            }
+        }
+
+        /* --- Layout & Sections --- */
+        .section { padding: 8rem 2rem; }
+        .container { max-width: 1100px !important; }
+
+        .hero { 
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero .title { 
+            color: var(--white); 
+            font-weight: 900; 
+            font-size: 4.5rem;
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+
+        .hero .subtitle { 
+            color: var(--text-dim);
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin: 1.5rem auto 2.5rem !important;
+        }
+
+        /* --- Code Block --- */
+        .code-box {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: var(--tea-green);
+            position: relative;
+            max-width: 700px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .code-box::before {
+            content: "maillayer.js";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--burnt-tangerine);
+            color: white;
+            font-size: 0.75rem;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-weight: bold;
+        }
+
+        .copy-btn {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-dim);
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        /* --- Box Styles --- */
+        .box.is-standard { 
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 3rem;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .box.is-standard:hover { 
+            transform: translateY(-8px);
+            border-color: rgba(224, 54, 22, 0.3);
+        }
+
+        .feature-icon { 
+            font-size: 2.5rem; 
+            margin-bottom: 1.5rem;
+            color: var(--burnt-tangerine);
+        }
+
+        .button.is-primary { 
+            background: var(--burnt-tangerine); 
+            font-weight: 700;
+            padding: 1.5rem 2.5rem;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(224, 54, 22, 0.2);
+        }
+
+        footer { 
+            background-color: var(--black) !important;
+            padding: 6rem 0;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-dim);
+        }
+
+        footer a { color: var(--text-dim); }
+        footer a:hover { color: white; }
+
+        @media (max-width: 768px) {
+            .hero .title { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="bg-canvas">
+        <div class="bg-gradient-overlay"></div>
+        <div class="bg-wrap" id="floating-container"></div>
+    </div>
+
+    <nav style="position: absolute; top: 2.5rem; left: 2.5rem; z-index: 100;">
+        <a href="https://github.com/Spuds0588/MailLayer-Embedded" target="_blank" class="has-text-grey-light is-size-6" style="display: inline-flex; align-items: center; text-decoration: none;">
+            <i class="fab fa-github mr-2"></i> GitHub
+        </a>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <div class="tag is-danger is-light is-rounded mb-5">Open Source — Drop-in Email Modal</div>
+                <h1 class="title">
+                    Native email sending. <br><span class="has-text-danger">1 line of code.</span>
+                </h1>
+                <h2 class="subtitle">
+                    Upgrade your website's email experience. Intercept standard <code>mailto:</code> links and provide a premium, integrated composition modal without leaving your app.
+                </h2>
+                
+                <div class="code-box mb-6">
+                    <button class="copy-btn" onclick="copyCode()">Copy</button>
+                    <code id="install-code">&lt;script src="https://spuds0588.github.io/MailLayer-Embedded/maillayer.js"&gt;&lt;/script&gt;</code>
+                </div>
+
+                <div class="mt-6 buttons is-centered">
+                    <a href="https://github.com/Spuds0588/MailLayer-Embedded#readme" target="_blank" class="button is-primary is-large is-rounded px-6" style="min-width: 260px; border-radius: 100px;">Read the Docs</a>
+                    <a href="test.html" class="button is-dark is-large is-rounded px-6" style="min-width: 260px; border-radius: 100px;">Try the Demo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="section">
+        <div class="container">
+            <div class="columns is-multiline">
+                <div class="column is-4">
+                    <div class="box is-standard">
+                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                        <h3 class="title is-4 has-text-white">Zero Config</h3>
+                        <p class="has-text-white">No backend required. No API keys to manage on your server. Just drop the script in and it works instantly via our hosted iframe.</p>
+                    </div>
+                </div>
+                <div class="column is-4">
+                    <div class="box is-standard">
+                        <div class="feature-icon"><i class="fas fa-paint-brush"></i></div>
+                        <h3 class="title is-4 has-text-white">Fully Brandable</h3>
+                        <p class="has-text-white">Customize the primary color and theme (light/dark) using simple data attributes to match your website's unique look and feel.</p>
+                    </div>
+                </div>
+                <div class="column is-4">
+                    <div class="box is-standard">
+                        <div class="feature-icon"><i class="fas fa-lock"></i></div>
+                        <h3 class="title is-4 has-text-white">Field Locking</h3>
+                        <p class="has-text-white">Prevent users from changing the recipient or subject line. Perfect for support forms, feedback triggers, and hiring portals.</p>
+                    </div>
+                </div>
+                <div class="column is-4">
+                    <div class="box is-standard">
+                        <div class="feature-icon"><i class="fas fa-search"></i></div>
+                        <h3 class="title is-4 has-text-white">Auto-Detect</h3>
+                        <p class="has-text-white">Optionally scan your page for plain-text email addresses and automatically transform them into premium MailLayer triggers.</p>
+                    </div>
+                </div>
+                <div class="column is-4">
+                    <div class="box is-standard">
+                        <div class="feature-icon"><i class="fas fa-paper-plane"></i></div>
+                        <h3 class="title is-4 has-text-white">Gmail & Outlook</h3>
+                        <p class="has-text-white">Users send emails using their own authenticated accounts. Secure, familiar, and delivered straight to their sent folder.</p>
+                    </div>
+                </div>
+                <div class="column is-4">
+                    <div class="box is-standard">
+                        <div class="feature-icon"><i class="fas fa-code"></i></div>
+                        <h3 class="title is-4 has-text-white">Open Source</h3>
+                        <p class="has-text-white">Built with transparency and privacy in mind. Fully open source and free to use in your personal or commercial projects.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container has-text-centered">
+            <h2 class="title is-2 has-text-white">Usage Example</h2>
+            <div class="box" style="background: #1a1a1a; text-align: left; max-width: 800px; margin: 0 auto; border: 1px solid #333;">
+                <pre style="background: transparent; color: #fff;"><code><span style="color: #64748b;">&lt;!-- Intercept standard links --&gt;</span>
+<span style="color: #5998c5;">&lt;a href="mailto:support@example.com"&gt;Contact Support&lt;/a&gt;</span>
+
+<span style="color: #64748b;">&lt;!-- Or use custom triggers with locked fields --&gt;</span>
+<span style="color: #5998c5;">&lt;button class="maillayer-trigger" 
+        data-maillayer-to="hiring@example.com"
+        data-maillayer-lock-to="true"
+        data-maillayer-color="e03616"&gt;
+    Apply Now
+&lt;/button&gt;</span></code></pre>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container has-text-centered">
+            <p class="mb-4">⚡ Built by <a href="https://github.com/Spuds0588" target="_blank">Spuds0588</a></p>
+            <div class="links mb-5">
+                <a href="https://github.com/Spuds0588/MailLayer-Embedded" class="mx-3">GitHub</a>
+                <a href="test.html" class="mx-3">Demo Page</a>
+                <a href="https://github.com/Spuds0588/MailLayer" class="mx-3">Main Extension</a>
+            </div>
+            
+            <button class="maillayer-trigger button is-dark is-small is-rounded" 
+                    data-maillayer-to="support@maillayer.io"
+                    data-maillayer-subject="Feedback on MailLayer Embedded">
+                <i class="fas fa-envelope mr-2"></i> Get in Touch
+            </button>
+
+            <p class="mt-6 is-size-7">&copy; 2026 MailLayer Embedded. MIT License.</p>
+        </div>
+    </footer>
+
+    <!-- Include the library we're showcasing -->
+    <script src="maillayer.js"></script>
+
+    <script>
+        // Floating SVG Animation
+        const container = document.getElementById('floating-container');
+        const svgPath = "M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z";
+        
+        const count = 18;
+        
+        for (let i = 1; i <= count; i++) {
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("viewBox", "0 0 24 24");
+            svg.setAttribute("width", "80");
+            svg.setAttribute("height", "80");
+            svg.classList.add("floating-svg");
+            
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", svgPath);
+            svg.appendChild(path);
+            
+            // Randomize depth properties (1 to 10)
+            const depth = Math.random() * 10; 
+            const scale = 0.5 + (depth * 0.25); // Bigger if "closer" (higher depth)
+            const blur = Math.max(0, depth - 7); // Blurrier if "closer"
+            const duration = 25 + (Math.random() * 30);
+            const delay = Math.random() * -50;
+            
+            svg.style.left = `${Math.random() * 110 - 5}%`;
+            svg.style.setProperty('--drift', `${Math.random() * 500 - 250}px`);
+            svg.style.setProperty('--rotation', `${Math.random() * 720 - 360}deg`);
+            svg.style.filter = `blur(${blur}px)`;
+            svg.style.transform = `scale(${scale}) rotate(${Math.random() * 360}deg)`;
+            svg.style.zIndex = Math.floor(depth);
+            svg.style.opacity = 0.1 + (depth * 0.05);
+            
+            // Set style to fill for envelope (Tangerine Red)
+            svg.style.fill = "var(--burnt-tangerine)";
+            svg.style.stroke = "none";
+            
+            svg.style.animation = `float-up ${duration}s linear infinite`;
+            svg.style.animationDelay = `${delay}s`;
+            
+            container.appendChild(svg);
+        }
+
+        function copyCode() {
+            const code = document.getElementById('install-code').innerText;
+            navigator.clipboard.writeText(code);
+            const btn = document.querySelector('.copy-btn');
+            btn.innerText = 'Copied!';
+            setTimeout(() => btn.innerText = 'Copy', 2000);
+        }
+    </script>
+</body>
+</html>
