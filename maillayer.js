@@ -9,7 +9,7 @@
     'use strict';
 
     // Configuration - Replace with your GitHub Pages URL
-    const BASE_URL = 'https://spuds0588.github.io/MailLayer-Embedded/';
+    const BASE_URL = 'https://embedded.maillayer.wiki/';
     
     // Find the script tag that included this file to read configuration
     const selfScript = document.currentScript || document.querySelector('script[src*="maillayer.js"]');

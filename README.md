@@ -1,6 +1,6 @@
 # ⚡ MailLayer Embedded
 
-[**Home Page**](https://spuds0588.github.io/MailLayer-Embedded/) &nbsp; | &nbsp; [**Try the Demo**](https://spuds0588.github.io/MailLayer-Embedded/test.html)
+[**Home Page**](https://embedded.maillayer.wiki/) &nbsp; | &nbsp; [**Try the Demo**](https://embedded.maillayer.wiki/test.html)
 
 MailLayer Embedded is a lightweight, drop-in JavaScript library that upgrades standard `mailto:` links on your website. Instead of opening a desktop client, it injects a native iframe modal that lets visitors send emails directly via Gmail or Outlook.
 
@@ -10,7 +10,7 @@ You can load the library using either the primary GitHub Pages host or the globa
 
 **Primary (GitHub Pages):**
 ```html
-<script src="https://spuds0588.github.io/MailLayer-Embedded/maillayer.js"></script>
+<script src="https://embedded.maillayer.wiki/maillayer.js"></script>
 ```
 
 **Secondary / Backup (jsDelivr):**
