@@ -14,12 +14,13 @@
             margin: 0 auto;
             line-height: 1.6;
         }
-        h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 1rem; }
+        h1 { font-size: 2.5rem; color: #0f172a; margin-bottom: 0.5rem; }
+        p.subtitle { color: #64748b; font-size: 1.1rem; margin-bottom: 2rem; }
         .card {
             background: white;
-            padding: 30px;
+            padding: 28px;
             border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
             margin-bottom: 20px;
         }
         .btn {
@@ -38,50 +39,40 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(224, 54, 22, 0.4);
         }
+        .btn-secondary {
+            background: #475569;
+        }
+        .btn-secondary:hover {
+            box-shadow: 0 10px 15px -3px rgba(71, 85, 105, 0.4);
+        }
         code {
             background: #f1f5f9;
             padding: 2px 6px;
             border-radius: 4px;
             font-family: monospace;
+            color: #0f172a;
         }
     </style>
 </head>
 <body>
-    <h1>MailLayer Embedded Test</h1>
-    <p>This page demonstrates <code>mailto:</code> interception and instant webmail deep-link popups.</p>
+    <h1>MailLayer Embedded Demo</h1>
+    <p class="subtitle">Click any link below to trigger MailLayer. On your first click, you will be prompted to select your preferred email service.</p>
 
     <div class="card">
-        <h3>Standard Mailto Link (Default Gmail)</h3>
-        <p>Intercepted and launched in a focused Gmail compose window.</p>
+        <h3>Standard Mailto Link</h3>
+        <p>Intercepts traditional email links on the page.</p>
         <a href="mailto:burnsdevfeedback@gmail.com?subject=Help%20Requested&body=Hello%20Team," class="btn">Contact Support</a>
     </div>
 
     <div class="card">
-        <h3>Outlook Deep Link Trigger</h3>
-        <p>Explicitly routes to Outlook Web Compose using <code>data-maillayer-provider="outlook"</code>.</p>
-        <a href="mailto:sales@maillayer.wiki" 
-           class="btn" 
-           style="background: #0078d4;"
-           data-maillayer-provider="outlook">Contact Sales (Outlook)</a>
-    </div>
-
-    <div class="card">
-        <h3>Yahoo Mail Deep Link Trigger</h3>
-        <p>Routes to Yahoo Mail Compose using <code>data-maillayer-provider="yahoo"</code>.</p>
-        <a href="mailto:feedback@yahoo.com?subject=MailLayer%20Feedback" 
-           class="btn" 
-           style="background: #6001d2;"
-           data-maillayer-provider="yahoo">Feedback (Yahoo Mail)</a>
-    </div>
-
-    <div class="card">
-        <h3>Multiple Recipients (CC / BCC)</h3>
-        <a href="mailto:dev@example.com?cc=manager@example.com&bcc=archive@example.com&subject=Project%20Update">Send Update</a>
+        <h3>Multiple Recipients (CC & BCC)</h3>
+        <p>Pre-fills multiple recipients cleanly into your selected email service.</p>
+        <a href="mailto:dev@example.com?cc=manager@example.com&bcc=archive@example.com&subject=Project%20Update" class="btn" style="background: #2563eb;">Send Update</a>
     </div>
 
     <div class="card">
         <h3>Button Trigger (.maillayer-trigger)</h3>
-        <p>Triggers MailLayer from custom dataset attributes without a traditional mailto tag.</p>
+        <p>Triggers MailLayer from custom dataset attributes without requiring a mailto tag.</p>
         <button class="maillayer-trigger btn" 
                 data-maillayer-to="hiring@startup.io"
                 data-maillayer-subject="Application for Senior Engineer"
@@ -90,7 +81,7 @@
 
     <div class="card">
         <h3>Auto-Detect (Magic UX)</h3>
-        <p>These plain-text email addresses are automatically transformed into clickable triggers:</p>
+        <p>These plain-text email addresses are automatically transformed into interactive triggers:</p>
         <ul>
             <li>Primary contact: info@maillayer.wiki</li>
             <li>Support: help.desk@maillayer.wiki</li>
@@ -98,10 +89,15 @@
         </ul>
     </div>
 
+    <div class="card" style="background: #f1f5f9; border: 1px dashed #cbd5e1;">
+        <h3>Testing Utility: Preference Management</h3>
+        <p>Reset your stored provider preference to trigger the selection modal prompt on your next click.</p>
+        <button onclick="localStorage.removeItem('maillayer_provider'); alert('Saved provider preference cleared! Click any link to see the selection prompt.');" class="btn btn-secondary">Reset Provider Choice</button>
+    </div>
+
     <!-- Include the MailLayer library with Auto-Detect ENABLED -->
     <script src="maillayer.js" 
             data-maillayer-auto-detect="true"
-            data-maillayer-auto-link-color="#e03616"
-            data-maillayer-provider="gmail"></script>
+            data-maillayer-auto-link-color="#e03616"></script>
 </body>
 </html>
